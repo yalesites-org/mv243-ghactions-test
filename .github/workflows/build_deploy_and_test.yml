@@ -51,7 +51,12 @@ jobs:
         run: |
           if [ "$CI_BRANCH" != "refs/heads/master" ]; then
             export PR_NUMBER="$PR_NUMBER"
-            export CI_BRANCH="$GITHUB_HEAD_REF"
+            #export CI_BRANCH="$GITHUB_HEAD_REF"
+            
+            export CI_BRANCH=`curl -u "${GITHUB_OWNER}:${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github.groot-preview+json" \
+              "https://api.github.com/repos/${CI_PROJECT_NAME}/commits/${COMMIT_SHA}/pulls" | \
+              python3 -c "import sys, json; print(json.load(sys.stdin)[0]['head']['ref'])"`
 
             export CI_PULL_REQUEST=`curl -u "${GITHUB_OWNER}:${GITHUB_TOKEN}" \
               -H "Accept: application/vnd.github.groot-preview+json" \
