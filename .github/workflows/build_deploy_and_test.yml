@@ -1,8 +1,5 @@
 name: Build, deploy and test
-on:
-  pull_request:
-    branches-ignore:
-      - master
+on: pull_request
 defaults:
   run:
     shell: bash
