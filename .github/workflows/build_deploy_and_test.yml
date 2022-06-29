@@ -54,7 +54,6 @@ jobs:
           if [ "$CI_BRANCH" != "refs/heads/master" ]; then
             export PR_NUMBER="$PR_NUMBER"
             export CI_BRANCH="$GITHUB_HEAD_REF"
-            export PR_URL="$PR_NUMBER"
             export CI_PULL_REQUEST="$CI_PULL_REQUEST"
             
           else
