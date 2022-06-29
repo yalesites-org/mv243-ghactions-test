@@ -48,12 +48,11 @@ jobs:
       - name: setup-environment-vars
         env:
           PR_NUMBER: ${{ github.event.number }}
+          PR_URL: ${{ github.event.pull_request.html.href }}
         run: |
           if [ "$CI_BRANCH" != "refs/heads/master" ]; then
             export PR_NUMBER="$PR_NUMBER"
-            #export CI_BRANCH="$GITHUB_HEAD_REF"
-            
-            export CI_BRANCH="refs/heads/$GITHUB_HEAD_REF"
+            export CI_BRANCH="$GITHUB_HEAD_REF"
 
             export CI_PULL_REQUEST=`curl -u "${GITHUB_OWNER}:${GITHUB_TOKEN}" \
               -H "Accept: application/vnd.github.groot-preview+json" \
@@ -117,6 +116,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Set bash_env env var
