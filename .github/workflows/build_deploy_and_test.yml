@@ -48,9 +48,9 @@ jobs:
       - name: setup-environment-vars
         run: |
           if [ ${{ github.event_name }} == 'push' ]; then
-            export CHECKOUT_REF=${{ github.sha }}
+            echo "export CHECKOUT_REF=${{ github.sha }}" >> $BASH_ENV
           elif [[ ${{ github.event_name }} == 'pull_request' ]]; then
-            export CHECKOUT_REF=${{ github.event.pull_request.head.sha }}
+            echo "export CHECKOUT_REF=${{ github.event.pull_request.head.sha }}" >> $BASH_ENV
           fi
   
           if [ "$CI_BRANCH" != "refs/heads/master" ]; then
