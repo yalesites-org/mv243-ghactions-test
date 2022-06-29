@@ -14,7 +14,7 @@ env:
   TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
   TEST_SITE_NAME: ${{ secrets.TERMINUS_SITE }}
   CI_BRANCH: ${{ github.ref }}
-  COMMIT_SHA: ${{github.event.pull_request.head.sha }}
+  COMMIT_SHA: ${{ github.sha }}
   CI_BUILD_NUMBER: ${{ github.run_number }}
   DEFAULT_SITE: ${{ secrets.TERMINUS_SITE }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -46,20 +46,21 @@ jobs:
       # Set TERMINUS_ENV and related environment variables.
       # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
       - name: setup-environment-vars
-        env:
-          PR_NUMBER: ${{ github.event.number }}
-          CI_PULL_REQUEST: ${{ github.event.pull_request.html.href }}
-          CI_PROJECT_REPONAME: ${{ github.event.repository.name }}
         run: |
+          if [ ${{ github.event_name }} == 'push' ]; then
+            export CHECKOUT_REF=${{ github.sha }}
+          elif [[ ${{ github.event_name }} == 'pull_request' ]]; then
+            export CHECKOUT_REF=${{ github.event.pull_request.head.sha }}
+          fi
+  
           if [ "$CI_BRANCH" != "refs/heads/master" ]; then
-            export PR_NUMBER="$PR_NUMBER"
+            export PR_NUMBER=${{ github.event.number }}
             export CI_BRANCH="$GITHUB_HEAD_REF"
-            export CI_PULL_REQUEST="$CI_PULL_REQUEST"
-            
+            export CI_PULL_REQUEST=${{ github.event.pull_request.html.href }}
           else
             export CI_BRANCH="master"
           fi
-          export CI_PROJECT_REPONAME="$CI_PROJECT_REPONAME"
+          export CI_PROJECT_REPONAME=${{ github.event.repository.name }}
           export CI_PROJECT_USERNAME=$GITHUB_REPOSITORY_OWNER
           /build-tools-ci/scripts/set-environment
           GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
@@ -111,7 +112,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: "$CHECKOUT_REF"
           fetch-depth: 0
 
       - name: Set bash_env env var
@@ -169,11 +170,6 @@ jobs:
       # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
       - name: setup-environment-vars
         run: /build-tools-ci/scripts/set-environment
-        
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
 
       # Deploy to Pantheon
       - name: deploy to Pantheon
@@ -184,7 +180,5 @@ jobs:
           chmod 600 ../private.key
           eval `ssh-agent -s`
           ssh-add ../private.key
-          echo "output BASH_ENV"
-          cat $BASH_ENV
           source $BASH_ENV
           ./.ci/deploy/pantheon/dev-multidev
