@@ -189,5 +189,7 @@ jobs:
           chmod 600 ../private.key
           eval `ssh-agent -s`
           ssh-add ../private.key
+          echo "output BASH_ENV"
+          echo $BASH_ENV
           source $BASH_ENV
           ./.ci/deploy/pantheon/dev-multidev
