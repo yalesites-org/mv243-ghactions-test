@@ -59,7 +59,7 @@ jobs:
           else
             export CI_BRANCH="master"
           fi
-          export CI_PROJECT_REPONAME=${{ github.repository }}
+          export CI_PROJECT_REPONAME=${{ github.event.repository.name }}
           export CI_PROJECT_USERNAME=${{ github.repository_owner }}
           /build-tools-ci/scripts/set-environment
           GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
