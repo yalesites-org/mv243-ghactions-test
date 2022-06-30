@@ -54,13 +54,13 @@ jobs:
         run: |
           if [ "$CI_BRANCH" != "refs/heads/master" ]; then
             export PR_NUMBER=${{ github.event.number }}
-            export CI_BRANCH="$GITHUB_HEAD_REF"
-            export CI_PULL_REQUEST=${{ github.event.pull_request.html.href }}
+            export CI_BRANCH=${{ github.head_ref }}
+            export CI_PULL_REQUEST=${{ github.event.pull_request._links.html.href }}
           else
             export CI_BRANCH="master"
           fi
-          export CI_PROJECT_REPONAME=${{ github.event.repository.name }}
-          export CI_PROJECT_USERNAME=$GITHUB_REPOSITORY_OWNER
+          export CI_PROJECT_REPONAME=${{ github.repository }}
+          export CI_PROJECT_USERNAME=${{ github.repository_owner }}
           /build-tools-ci/scripts/set-environment
           GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
           echo "export CI_BUILD_URL='${GITHUB_WORKFLOW_URL}'" >> $BASH_ENV
