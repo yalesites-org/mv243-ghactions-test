@@ -106,15 +106,15 @@ jobs:
       - name: Get github event
         run: |
           if [ ${{ github.event_name }} == 'push' ]; then
-            export CHECKOUT_REF=${{ github.sha }}
+            echo CHECKOUT_REF=${{ github.sha }} >> $GITHUB_ENV
           elif [[ ${{ github.event_name }} == 'pull_request' ]]; then
-            export CHECKOUT_REF=${{ github.event.pull_request.head.sha }}
+            echo CHECKOUT_REF=${{ github.event.pull_request.head.sha }} >> $GITHUB_ENV
           fi
 
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: "$CHECKOUT_REF"
+          ref: ${{ env.CHECKOUT_REF }}
           fetch-depth: 0
 
       - name: Set bash_env env var
