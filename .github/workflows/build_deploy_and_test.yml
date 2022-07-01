@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Set bash_env env var
         run: echo BASH_ENV=${RUNNER_TEMP}/bash_env.txt >> $GITHUB_ENV
@@ -60,7 +62,7 @@ jobs:
             export CI_BRANCH="master"
           fi
           export CI_PROJECT_REPONAME=${GITHUB_REPOSITORY#*/}
-          export CI_PROJECT_USERNAME=${{ github.repository_owner }}
+          export CI_PROJECT_USERNAME=${$GITHUB_REPOSITORY_OWNER}
           /build-tools-ci/scripts/set-environment
           GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
           echo "export CI_BUILD_URL='${GITHUB_WORKFLOW_URL}'" >> $BASH_ENV
