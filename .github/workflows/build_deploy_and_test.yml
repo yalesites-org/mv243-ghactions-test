@@ -32,9 +32,9 @@ jobs:
         id: set_checkout_ref
         run: |
           if [ ${{ github.event_name }} == 'push' ]; then
-            echo "::set-output name=checkout_ref::${{ github.sha }}"
+            echo "::set-output name=checkout_ref::${{ github.ref }}"
           elif [[ ${{ github.event_name }} == 'pull_request' ]]; then
-            echo "::set-output name=checkout_ref::${{ github.event.pull_request.head.sha }}"
+            echo "::set-output name=checkout_ref::${{ github.event.pull_request.head.ref }}"
           fi
 
   configure_env_vars:
