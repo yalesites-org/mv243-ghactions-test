@@ -24,9 +24,6 @@ env:
 
 jobs:
   set_checkout_ref:
-    container:
-      image: quay.io/pantheon-public/build-tools-ci:8.x-php7.4
-      options: --user root
     runs-on: ubuntu-latest
     outputs:
       checkout_ref: ${{ steps.set_checkout_ref.outputs.checkout_ref }}
