@@ -55,6 +55,7 @@ jobs:
       - name: setup-environment-vars
         run: |
           if [ "$CI_BRANCH" != "master" ]; then
+          echo "\$CI_BRANCH is $CI_BRANCH"
             # Test vars not set means trigger = push.
             if [ -z "$PR_NUMBER" ]; then
               # Var not set means trigger = push.
@@ -62,12 +63,15 @@ jobs:
                 -H "Accept: application/vnd.github.groot-preview+json" \
                 "https://api.github.com/repos/${CI_PROJECT_NAME}/commits/${COMMIT_SHA}/pulls" | \
                 jq '.[0].number | select(.!=null)'`
+
+                echo "\$PR_NUMBER is $PR_NUMBER"
             fi
             if [ -z "$CI_PULL_REQUEST" ]; then
               export CI_PULL_REQUEST=`curl -u "${GITHUB_OWNER}:${GITHUB_TOKEN}" \
                 -H "Accept: application/vnd.github.groot-preview+json" \
                 "https://api.github.com/repos/${CI_PROJECT_NAME}/commits/${COMMIT_SHA}/pulls" | \
                 jq '.[0].html_url | select(.!=null)'`
+                echo "\$CI_PULL_REQUEST is $CI_PULL_REQUEST"
             fi
           fi
           export CI_PROJECT_REPONAME=${GITHUB_REPOSITORY#*/}
